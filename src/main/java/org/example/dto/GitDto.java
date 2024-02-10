@@ -1,17 +1,17 @@
 package org.example.dto;
 
-import java.util.List;
+import java.util.Map;
 
 public class GitDto {
 
     private String repoName;
-    private List<String> branches;
+    private Map<String, String> branches;
 
     public void setRepoName(String repoName) {
         this.repoName = repoName;
     }
 
-    public void setBranches(List<String> branches) {
+    public void setBranches(Map<String, String> branches) {
         this.branches = branches;
     }
 
@@ -19,7 +19,7 @@ public class GitDto {
         return repoName;
     }
 
-    public List<String> getBranches() {
+    public Map<String, String> getBranches() {
         return branches;
     }
 }

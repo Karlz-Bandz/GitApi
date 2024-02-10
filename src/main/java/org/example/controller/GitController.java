@@ -16,6 +16,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,8 +27,12 @@ public class GitController {
     @Value("${github.api.url}")
     private String githubApiUrl;
 
+    private final RestTemplate restTemplate;
+
     @Autowired
-    private RestTemplate restTemplate;
+    public GitController(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     @GetMapping("/limit")
     public ResponseEntity<Object> getLimit(){
@@ -50,7 +55,7 @@ public class GitController {
             if(repositories != null){
                 for (RepoDto repository : repositories) {
                     String repoName = repository.getName();
-                    List<String> branches = getBranchesForRepository(username, repoName);
+                    Map<String, String> branches = getBranchesForRepository(username, repoName);
                     GitDto gitDto = new GitDto();
                     gitDto.setRepoName(repoName);
                     gitDto.setBranches(branches);
@@ -82,24 +87,19 @@ public class GitController {
         }
     }
 
-    private List<String> getBranchesForRepository(String userName, String repoName){
+    private Map<String, String> getBranchesForRepository(String userName, String repoName){
         String apiBranchUrl = githubApiUrl + "/repos/" + userName + "/" + repoName + "/branches";
 
         ResponseEntity<BranchDto[]> response = restTemplate.getForEntity(apiBranchUrl, BranchDto[].class);
 
         BranchDto[] branches = response.getBody();
 
-        List<String> branchesList = new ArrayList<>();
+        Map<String, String> branchesList = new HashMap<>();
 
         if(branches != null){
             for(BranchDto branch: branches){
-                StringBuilder branchesInfo = new StringBuilder();
                 String lastCommit = getLastCommitSha(userName, repoName, branch.getName());
-                branchesInfo.append("Branch name: ")
-                        .append(branch.getName())
-                        .append("; Last commit sha: ")
-                        .append(lastCommit);
-                branchesList.add(branchesInfo.toString());
+                branchesList.put(branch.getName(), lastCommit);
             }
         }
         return branchesList;
