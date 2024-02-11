@@ -1,29 +1,28 @@
 package org.example.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
-@RestController
+import java.util.Map;
+
 @RequestMapping("/git")
-public class GitController {
-
-    @Value("${github.api.url}")
-    private String githubApiUrl;
-
-    @Autowired
-    private RestTemplate restTemplate;
+public interface GitController {
 
     @GetMapping("/limit")
-    public ResponseEntity<Object> getLimit(){
-        String apiUrl = githubApiUrl + "/rate_limit";
+    ResponseEntity<Object> getLimit();
 
-        ResponseEntity<Object> response = restTemplate.getForEntity(apiUrl, Object.class);
+    @GetMapping("/repositories/{username}")
+    ResponseEntity<Object> getRepositories(@PathVariable("username") String username);
 
-        return ResponseEntity.ok(response.getBody());
-    }
+    @GetMapping("/commit/{username}/{repoName}/{branchName}")
+    ResponseEntity<String> getLastCommitSha(@PathVariable("username") String userName,
+                            @PathVariable("repoName")String repoName,
+                            @PathVariable("branchName")String branchName);
+
+    @GetMapping("/branch/{username}/{repoName}")
+    ResponseEntity<Map<String, String>> getBranchesForRepository(@PathVariable("username") String userName,
+                                                 @PathVariable("repoName")String repoName);
+
 }
