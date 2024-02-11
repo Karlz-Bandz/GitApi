@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -42,6 +43,71 @@ class GitControllerTest {
         ResponseEntity<Object> response = gitController.getLimit();
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    void getBranchesForRepositoryTest_SUCCESS(){
+        String userName = "TestUser";
+        String repoName = "TestRepo";
+
+        BranchDto branch1 = BranchDto.builder()
+                .name("Branch1")
+                .build();
+        BranchDto branch2 = BranchDto.builder()
+                .name("Branch2")
+                .build();
+        BranchDto[] branchArr1 = {branch1, branch2};
+
+        String apiBranchUrl = GIT_API_URL + "/repos/" + userName + "/" + repoName + "/branches";
+
+        when(restTemplate.getForEntity(apiBranchUrl, BranchDto[].class))
+                .thenReturn(ResponseEntity.ok(branchArr1));
+
+        String apiLastCommitUrl1 = GIT_API_URL + "/repos/" + userName + "/" + repoName + "/commits/" + branch1.getName();
+        String apiLastCommitUrl2 = GIT_API_URL + "/repos/" + userName + "/" + repoName + "/commits/" + branch2.getName();
+
+        CommitDto mockCommit1 = CommitDto.builder()
+                .sha("333444122")
+                .build();
+        CommitDto mockCommit2 = CommitDto.builder()
+                .sha("333444122")
+                .build();
+
+        Map<String, String> expectedResponse = Map.of(
+                branch1.getName(), mockCommit1.getSha(),
+                branch2.getName(), mockCommit2.getSha()
+        );
+
+        when(restTemplate.getForEntity(apiLastCommitUrl1, CommitDto.class))
+                .thenReturn(ResponseEntity.ok(mockCommit1));
+        when(restTemplate.getForEntity(apiLastCommitUrl2, CommitDto.class))
+                .thenReturn(ResponseEntity.ok(mockCommit2));
+
+        ResponseEntity<Map<String, String>> response = gitController.getBranchesForRepository(userName, repoName);
+
+        assertEquals(expectedResponse, response.getBody());
+        assertEquals(response.getStatusCode(), HttpStatusCode.valueOf(200));
+    }
+
+    @Test
+    void getLastCommitShaTest_SUCCESS(){
+        String userName = "TestUser";
+        String repoName = "TestRepo";
+        String branchName = "TestBranch";
+
+        String apiLastCommitUrl = GIT_API_URL + "/repos/" + userName + "/" + repoName + "/commits/" + branchName;
+
+        CommitDto mockCommit = CommitDto.builder()
+                .sha("333444122")
+                .build();
+
+        when(restTemplate.getForEntity(apiLastCommitUrl, CommitDto.class))
+                .thenReturn(ResponseEntity.ok(mockCommit));
+
+        ResponseEntity<String> response = gitController.getLastCommitSha(userName, repoName, branchName);
+
+        assertEquals(response.getBody(), mockCommit.getSha());
+        assertEquals(response.getStatusCode(), HttpStatusCode.valueOf(200));
     }
 
     @Test
