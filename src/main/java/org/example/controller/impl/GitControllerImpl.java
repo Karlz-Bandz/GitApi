@@ -53,7 +53,8 @@ public class GitControllerImpl implements GitController {
             if(repositories != null){
                 for (RepoDto repository : repositories) {
                     String repoName = repository.getName();
-                    Map<String, String> branches = getBranchesForRepository(username, repoName);
+                    Map<String, String> branches = getBranchesForRepository(username, repoName)
+                            .getBody();
                     GitDto gitDto = GitDto.builder()
                             .repoName(repoName)
                             .branches(branches)
@@ -72,7 +73,8 @@ public class GitControllerImpl implements GitController {
         }
     }
 
-    private String getLastCommitSha(String userName, String repoName, String branchName){
+    @Override
+    public ResponseEntity<String> getLastCommitSha(String userName, String repoName, String branchName){
         String apiLastCommitUrl = githubApiUrl + "/repos/" + userName + "/" + repoName + "/commits/" + branchName;
 
         ResponseEntity<CommitDto> response = restTemplate.getForEntity(apiLastCommitUrl, CommitDto.class);
@@ -80,13 +82,14 @@ public class GitControllerImpl implements GitController {
         CommitDto commit = response.getBody();
 
         if(commit != null){
-            return commit.getSha();
+            return ResponseEntity.ok(commit.getSha());
         }else{
-            return null;
+            return ResponseEntity.ok(null);
         }
     }
 
-    private Map<String, String> getBranchesForRepository(String userName, String repoName){
+    @Override
+    public ResponseEntity<Map<String, String>> getBranchesForRepository(String userName, String repoName){
         String apiBranchUrl = githubApiUrl + "/repos/" + userName + "/" + repoName + "/branches";
 
         ResponseEntity<BranchDto[]> response = restTemplate.getForEntity(apiBranchUrl, BranchDto[].class);
@@ -97,10 +100,11 @@ public class GitControllerImpl implements GitController {
 
         if(branches != null){
             for(BranchDto branch: branches){
-                String lastCommit = getLastCommitSha(userName, repoName, branch.getName());
+                String lastCommit = getLastCommitSha(userName, repoName, branch.getName())
+                        .getBody();
                 branchesList.put(branch.getName(), lastCommit);
             }
         }
-        return branchesList;
+        return ResponseEntity.ok(branchesList);
     }
 }
