@@ -11,12 +11,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -43,9 +45,27 @@ class GitControllerTest {
     }
 
     @Test
-    void getRepositoriesTest(){
+    void getRepositoriesTest_ERROR(){
         String username = "TestUser";
-        String gitRepoApi = "https://api.github.com/users/" + username + "/repos";
+        String gitRepoApi = GIT_API_URL + "/users/" + username + "/repos";
+
+        when(restTemplate.getForEntity(gitRepoApi, RepoDto[].class))
+                .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
+
+        HttpClientErrorException expectedResponse = new HttpClientErrorException(HttpStatus.NOT_FOUND);
+
+        HttpClientErrorException exceptionResponse = assertThrows(HttpClientErrorException.class, () -> {
+            gitController.getRepositories(username);
+        });
+
+        assertEquals(expectedResponse.getMessage(),
+                     exceptionResponse.getMessage());
+    }
+
+    @Test
+    void getRepositoriesTest_SUCCESS(){
+        String username = "TestUser";
+        String gitRepoApi = GIT_API_URL + "/users/" + username + "/repos";
 
         RepoDto repoDto1 = RepoDto.builder()
                 .name("Repo1")
