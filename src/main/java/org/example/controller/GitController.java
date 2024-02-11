@@ -56,9 +56,10 @@ public class GitController {
                 for (RepoDto repository : repositories) {
                     String repoName = repository.getName();
                     Map<String, String> branches = getBranchesForRepository(username, repoName);
-                    GitDto gitDto = new GitDto();
-                    gitDto.setRepoName(repoName);
-                    gitDto.setBranches(branches);
+                    GitDto gitDto = GitDto.builder()
+                            .repoName(repoName)
+                            .branches(branches)
+                            .build();
                     responses.add(gitDto);
                 }
             }
