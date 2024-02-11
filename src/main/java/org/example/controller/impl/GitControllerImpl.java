@@ -6,7 +6,6 @@ import org.example.dto.CommitDto;
 import org.example.dto.GitDto;
 import org.example.dto.RepoDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,8 +21,7 @@ import java.util.Map;
 @RestController
 public class GitControllerImpl implements GitController {
 
-    @Value("${github.api.url}")
-    private String githubApiUrl;
+    private static final String GIT_API_URL = "https://api.github.com";
 
     private final RestTemplate restTemplate;
 
@@ -34,7 +32,7 @@ public class GitControllerImpl implements GitController {
 
     @Override
     public ResponseEntity<Object> getLimit(){
-        String apiUrl = githubApiUrl + "/rate_limit";
+        String apiUrl = GIT_API_URL + "/rate_limit";
 
         ResponseEntity<Object> response = restTemplate.getForEntity(apiUrl, Object.class);
 
@@ -43,7 +41,7 @@ public class GitControllerImpl implements GitController {
 
     @Override
     public ResponseEntity<Object> getRepositories(@PathVariable(name = "username") String username){
-        String apiUrl = githubApiUrl + "/users/" + username + "/repos";
+        String apiUrl = GIT_API_URL + "/users/" + username + "/repos";
 
         try {
             ResponseEntity<RepoDto[]> response = restTemplate.getForEntity(apiUrl, RepoDto[].class);
@@ -75,7 +73,7 @@ public class GitControllerImpl implements GitController {
 
     @Override
     public ResponseEntity<String> getLastCommitSha(String userName, String repoName, String branchName){
-        String apiLastCommitUrl = githubApiUrl + "/repos/" + userName + "/" + repoName + "/commits/" + branchName;
+        String apiLastCommitUrl = GIT_API_URL + "/repos/" + userName + "/" + repoName + "/commits/" + branchName;
 
         ResponseEntity<CommitDto> response = restTemplate.getForEntity(apiLastCommitUrl, CommitDto.class);
 
@@ -90,7 +88,7 @@ public class GitControllerImpl implements GitController {
 
     @Override
     public ResponseEntity<Map<String, String>> getBranchesForRepository(String userName, String repoName){
-        String apiBranchUrl = githubApiUrl + "/repos/" + userName + "/" + repoName + "/branches";
+        String apiBranchUrl = GIT_API_URL + "/repos/" + userName + "/" + repoName + "/branches";
 
         ResponseEntity<BranchDto[]> response = restTemplate.getForEntity(apiBranchUrl, BranchDto[].class);
 
