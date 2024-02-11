@@ -1,6 +1,6 @@
 package controller;
 
-import org.example.controller.GitController;
+import org.example.controller.impl.GitControllerImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,7 +15,7 @@ class GitControllerTest {
     private RestTemplate restTemplate;
 
     @InjectMocks
-    private GitController gitController;
+    private GitControllerImpl gitController;
 
     @Test
     void getRepositoriesTest_SUCCESS(){
