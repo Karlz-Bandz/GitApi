@@ -1,6 +1,10 @@
 package org.example.controller.impl;
 
-import org.example.dto.*;
+import org.example.dto.GitMasterDto;
+import org.example.dto.GitDto;
+import org.example.dto.BranchDto;
+import org.example.dto.CommitDto;
+import org.example.dto.RepoDto;
 import org.example.service.GitService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
