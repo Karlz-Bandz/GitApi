@@ -4,7 +4,7 @@ import org.example.dto.BranchDto;
 import org.example.dto.CommitDto;
 import org.example.dto.GitDto;
 import org.example.dto.RepoDto;
-import org.example.exception.git.GitUserNotFoundException;
+import org.example.exception.git.GitNotFoundException;
 import org.example.service.GitService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -45,7 +45,7 @@ public class GitServiceImpl implements GitService {
             RepoDto[] repositories = response.getBody();
             List<GitDto> responses = new ArrayList<>();
 
-            if(repositories != null){
+            if(repositories != null && repositories.length > 0){
                 for (RepoDto repository : repositories) {
                     String repoName = repository.getName();
                     Map<String, String> branches = getBranchesForRepository(username, repoName)
@@ -56,10 +56,12 @@ public class GitServiceImpl implements GitService {
                             .build();
                     responses.add(gitDto);
                 }
+                return ResponseEntity.ok(responses);
+            }else{
+                throw new GitNotFoundException(username + " doesn't have any repos");
             }
-            return ResponseEntity.ok(responses);
         }catch (HttpClientErrorException.NotFound notFound){
-            throw new GitUserNotFoundException("Git user not found!");
+            throw new GitNotFoundException("Git user not found!");
         }
     }
 

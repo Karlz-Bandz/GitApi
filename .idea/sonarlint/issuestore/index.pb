@@ -62,3 +62,5 @@ u
 Esrc/main/java/org/example/exception/git/GitUserNotFoundException.java,7\4\746c60dd4c467bd43ac9cbb7057c4bb1af84c5bb
 o
 ?src/main/java/org/example/exception/GlobalExceptionHandler.java,4\b\4b07fbfb22b37ba1d85e582294957c7266e5b909
+v
+Fsrc/main/java/org/example/exception/git/GitBranchNotFounException.java,9\d\9d11ab9361ec5eea8381b5aaba7c2626dd17995b
