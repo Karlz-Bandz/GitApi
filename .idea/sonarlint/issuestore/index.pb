@@ -38,3 +38,15 @@ k
 ;src/test/java/org/example/controller/GitControllerTest.java,b\a\ba2657c4222cc839abbd5ee9f815933df4034138
 n
 >src/test/java/org/example/controller/HealthControllerTest.java,e\0\e04f2ac56ff4ce04b2d12c619e8887ba8b0ca0c8
+a
+1src/main/java/org/example/service/GitService.java,6\a\6a740e7e7a5207e2fb1b669086039f9e852d1ad4
+j
+:src/main/java/org/example/service/impl/GitServiceImpl.java,2\2\22681f9acac7b87066b970c20ade9dabd670f277
+n
+>src/main/java/org/example/service2/impl/GitControllerImpl.java,3\2\32733da3d4c69069d3bda6906a41ce7f545e8d21
+n
+>src/test/java/org/example/service2/impl/GitControllerTest.java,6\d\6d36cf55265218e149c481be20bb9a1abf489f6a
+e
+5src/main/java/org/example/service2/GitController.java,1\e\1ecdc2f189218b862b82db3fdb5b72ecd518fe89
+i
+9src/test/java/org/example/service/GitServiceImplTest.java,9\2\92865f5c1a43d6577389e64fec2f41196a02e2c6

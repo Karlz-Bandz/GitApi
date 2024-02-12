@@ -15,14 +15,4 @@ public interface GitController {
 
     @GetMapping("/repositories/{username}")
     ResponseEntity<Object> getRepositories(@PathVariable("username") String username);
-
-    @GetMapping("/commit/{username}/{repoName}/{branchName}")
-    ResponseEntity<String> getLastCommitSha(@PathVariable("username") String userName,
-                            @PathVariable("repoName")String repoName,
-                            @PathVariable("branchName")String branchName);
-
-    @GetMapping("/branch/{username}/{repoName}")
-    ResponseEntity<Map<String, String>> getBranchesForRepository(@PathVariable("username") String userName,
-                                                 @PathVariable("repoName")String repoName);
-
 }
