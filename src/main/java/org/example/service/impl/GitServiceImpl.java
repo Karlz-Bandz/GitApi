@@ -5,7 +5,6 @@ import org.example.dto.CommitDto;
 import org.example.dto.GitDto;
 import org.example.dto.RepoDto;
 import org.example.service.GitService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -24,7 +23,6 @@ public class GitServiceImpl implements GitService {
 
     private final RestTemplate restTemplate;
 
-    @Autowired
     public GitServiceImpl(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
