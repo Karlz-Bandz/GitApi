@@ -66,3 +66,5 @@ v
 Fsrc/main/java/org/example/exception/git/GitBranchNotFounException.java,9\d\9d11ab9361ec5eea8381b5aaba7c2626dd17995b
 q
 Asrc/main/java/org/example/exception/git/GitNotFoundException.java,c\5\c53e2735343190f9bf8b48ca3bfe319683908a4a
+_
+/src/main/java/org/example/dto/GitMasterDto.java,5\a\5a1068b73131cb48bb9299ad5f2ed9bee724fc37

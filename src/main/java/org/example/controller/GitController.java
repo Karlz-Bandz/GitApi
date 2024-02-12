@@ -1,6 +1,7 @@
 package org.example.controller;
 
 import org.example.dto.GitDto;
+import org.example.dto.GitMasterDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,5 +16,5 @@ public interface GitController {
     ResponseEntity<Object> getLimit();
 
     @GetMapping("/repositories/{username}")
-    ResponseEntity<List<GitDto>> getRepositories(@PathVariable("username") String username);
+    ResponseEntity<GitMasterDto> getRepositories(@PathVariable("username") String username);
 }

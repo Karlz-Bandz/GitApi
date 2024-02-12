@@ -1,9 +1,6 @@
 package org.example.service;
 
-import org.example.dto.BranchDto;
-import org.example.dto.CommitDto;
-import org.example.dto.GitDto;
-import org.example.dto.RepoDto;
+import org.example.dto.*;
 import org.example.service.impl.GitServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -189,7 +186,11 @@ class GitServiceImplTest {
                 .repoName(repoDto2.getName())
                 .branches(branches2)
                 .build();
-        List<GitDto> expectResponse = Arrays.asList(gitDto1, gitDto2);
+        List<GitDto> responses = Arrays.asList(gitDto1, gitDto2);
+        GitMasterDto expectedResponse = GitMasterDto.builder()
+                        .userName(username)
+                        .repositories(responses)
+                        .build();
 
         when(restTemplate.getForEntity(gitRepoApi, RepoDto[].class))
                 .thenReturn(ResponseEntity.ok(repos));
@@ -208,8 +209,8 @@ class GitServiceImplTest {
         when(restTemplate.getForEntity(GIT_API_URL + "/repos/" + username + "/" + repoDto2.getName() + "/commits/" + branch4.getName(), CommitDto.class))
                 .thenReturn(ResponseEntity.ok(commitDto4));
 
-        ResponseEntity<List<GitDto>> response = gitService.getRepositories(username);
+        ResponseEntity<GitMasterDto> response = gitService.getRepositories(username);
 
-        assertEquals(expectResponse, response.getBody());
+        assertEquals(expectedResponse, response.getBody());
     }
 }

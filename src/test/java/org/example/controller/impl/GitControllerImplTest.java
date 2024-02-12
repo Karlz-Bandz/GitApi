@@ -1,9 +1,6 @@
 package org.example.controller.impl;
 
-import org.example.dto.BranchDto;
-import org.example.dto.CommitDto;
-import org.example.dto.GitDto;
-import org.example.dto.RepoDto;
+import org.example.dto.*;
 import org.example.service.GitService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -54,12 +51,17 @@ class GitControllerImplTest {
                 .branches(mockBranches)
                 .build();
         List<GitDto> mockGitDtoList = Arrays.asList(gitDto1, gitDto1);
+        GitMasterDto mockGitMasterDto = GitMasterDto.builder()
+                .userName("testUser")
+                .repositories(mockGitDtoList)
+                .build();
 
-        ResponseEntity<List<GitDto>> mockResponse = ResponseEntity.ok(mockGitDtoList);
+        ResponseEntity<GitMasterDto> mockResponse = ResponseEntity.ok(mockGitMasterDto);
 
-        when(gitService.getRepositories(repoDto1.getName())).thenReturn(mockResponse);
+        when(gitService.getRepositories(repoDto1.getName()))
+                .thenReturn(ResponseEntity.ok(mockGitMasterDto));
 
-        ResponseEntity<List<GitDto>> response = gitController.getRepositories(repoDto1.getName());
+        ResponseEntity<GitMasterDto> response = gitController.getRepositories(repoDto1.getName());
 
         assertEquals(response, mockResponse);
     }

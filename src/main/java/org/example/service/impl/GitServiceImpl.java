@@ -1,9 +1,6 @@
 package org.example.service.impl;
 
-import org.example.dto.BranchDto;
-import org.example.dto.CommitDto;
-import org.example.dto.GitDto;
-import org.example.dto.RepoDto;
+import org.example.dto.*;
 import org.example.exception.git.GitNotFoundException;
 import org.example.service.GitService;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +34,7 @@ public class GitServiceImpl implements GitService {
     }
 
     @Override
-    public ResponseEntity<List<GitDto>> getRepositories(String username) {
+    public ResponseEntity<GitMasterDto> getRepositories(String username) {
         String apiUrl = GIT_API_URL + "/users/" + username + "/repos";
 
         try {
@@ -56,7 +53,13 @@ public class GitServiceImpl implements GitService {
                             .build();
                     responses.add(gitDto);
                 }
-                return ResponseEntity.ok(responses);
+
+                GitMasterDto userData = GitMasterDto.builder()
+                        .userName(username)
+                        .repositories(responses)
+                        .build();
+
+                return ResponseEntity.ok(userData);
             }else{
                 throw new GitNotFoundException(username + " doesn't have any repos");
             }

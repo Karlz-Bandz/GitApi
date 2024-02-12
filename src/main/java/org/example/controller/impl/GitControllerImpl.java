@@ -2,6 +2,7 @@ package org.example.controller.impl;
 
 import org.example.controller.GitController;
 import org.example.dto.GitDto;
+import org.example.dto.GitMasterDto;
 import org.example.service.GitService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,7 +24,7 @@ public class GitControllerImpl implements GitController {
     }
 
     @Override
-    public ResponseEntity<List<GitDto>> getRepositories(String username){
+    public ResponseEntity<GitMasterDto> getRepositories(String username){
         return gitService.getRepositories(username);
     }
 }
