@@ -64,3 +64,5 @@ o
 ?src/main/java/org/example/exception/GlobalExceptionHandler.java,4\b\4b07fbfb22b37ba1d85e582294957c7266e5b909
 v
 Fsrc/main/java/org/example/exception/git/GitBranchNotFounException.java,9\d\9d11ab9361ec5eea8381b5aaba7c2626dd17995b
+q
+Asrc/main/java/org/example/exception/git/GitNotFoundException.java,c\5\c53e2735343190f9bf8b48ca3bfe319683908a4a
