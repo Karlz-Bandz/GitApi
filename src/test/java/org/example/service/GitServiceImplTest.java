@@ -208,7 +208,7 @@ class GitServiceImplTest {
         when(restTemplate.getForEntity(GIT_API_URL + "/repos/" + username + "/" + repoDto2.getName() + "/commits/" + branch4.getName(), CommitDto.class))
                 .thenReturn(ResponseEntity.ok(commitDto4));
 
-        ResponseEntity<Object> response = gitService.getRepositories(username);
+        ResponseEntity<List<GitDto>> response = gitService.getRepositories(username);
 
         assertEquals(expectResponse, response.getBody());
     }

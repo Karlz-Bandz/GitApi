@@ -55,11 +55,11 @@ class GitControllerImplTest {
                 .build();
         List<GitDto> mockGitDtoList = Arrays.asList(gitDto1, gitDto1);
 
-        ResponseEntity<Object> mockResponse = ResponseEntity.ok(mockGitDtoList);
+        ResponseEntity<List<GitDto>> mockResponse = ResponseEntity.ok(mockGitDtoList);
 
         when(gitService.getRepositories(repoDto1.getName())).thenReturn(mockResponse);
 
-        ResponseEntity<Object> response = gitController.getRepositories(repoDto1.getName());
+        ResponseEntity<List<GitDto>> response = gitController.getRepositories(repoDto1.getName());
 
         assertEquals(response, mockResponse);
     }

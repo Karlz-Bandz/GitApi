@@ -50,3 +50,15 @@ e
 5src/main/java/org/example/service2/GitController.java,1\e\1ecdc2f189218b862b82db3fdb5b72ecd518fe89
 i
 9src/test/java/org/example/service/GitServiceImplTest.java,9\2\92865f5c1a43d6577389e64fec2f41196a02e2c6
+q
+Asrc/main/java/org/example/exception/GitUserNotFoundException.java,8\a\8a126fb64f047bbd10d51c3042004ca361e00529
+i
+9src/main/java/org/example/exception/GitErrorResponse.java,8\5\858d24577513f2a998550a6c5a1744bf6f16012d
+r
+Bsrc/main/java/org/example/exception/GitGlobalExceptionHandler.java,6\4\64077dca308e9178198b97e14ab2eafd2f600911
+m
+=src/main/java/org/example/exception/git/GitErrorResponse.java,2\2\22c54ebb9293bad447439e92dc30212dba74095d
+u
+Esrc/main/java/org/example/exception/git/GitUserNotFoundException.java,7\4\746c60dd4c467bd43ac9cbb7057c4bb1af84c5bb
+o
+?src/main/java/org/example/exception/GlobalExceptionHandler.java,4\b\4b07fbfb22b37ba1d85e582294957c7266e5b909
