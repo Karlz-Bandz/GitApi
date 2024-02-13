@@ -73,10 +73,22 @@ If user doesn't exist
 }
 ```
 If user doesn't have any repos
+
 ```json
 {
   "status": 404,
   "message": "User6766 doesn't have any repos!"
+}
+```
+If user is unauthorized because token has been not provided into
+application.properties or token has been expired or deleted by 
+Git administration you will see the code status like below. Please 
+generate a new token and provide it to application.properties
+
+```json
+{
+  "status": 401,
+  "message": "You are unauthorized!"
 }
 ```
 

@@ -5,6 +5,7 @@ import org.example.dto.GitDto;
 import org.example.dto.BranchDto;
 import org.example.dto.RepoDto;
 import org.example.exception.git.GitNotFoundException;
+import org.example.exception.git.GitUnauthorizedException;
 import org.example.service.GitService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -25,10 +26,11 @@ public class GitServiceImpl implements GitService {
     @Override
     public ResponseEntity<Object> getLimit() {
         String apiUrl = GIT_API_URL + "/rate_limit";
-
-        ResponseEntity<Object> response = restTemplate.getForEntity(apiUrl, Object.class);
-
-        return ResponseEntity.ok(response.getBody());
+        try{
+            return restTemplate.getForEntity(apiUrl, Object.class);
+        }catch (HttpClientErrorException.Unauthorized unauthorized){
+            throw new GitUnauthorizedException("You are unauthorized!");
+        }
     }
 
     @Override
@@ -51,7 +53,6 @@ public class GitServiceImpl implements GitService {
                             .build();
                     responses[i] = gitDto;
                 }
-
                 GitMasterDto userData = GitMasterDto.builder()
                         .userName(username)
                         .repositories(responses)
@@ -61,7 +62,10 @@ public class GitServiceImpl implements GitService {
             }else{
                 throw new GitNotFoundException(username + " doesn't have any repos!");
             }
-        }catch (HttpClientErrorException.NotFound notFound){
+        }catch (HttpClientErrorException.Unauthorized unauthorized){
+            throw new GitUnauthorizedException("You are unauthorized!");
+        }
+        catch (HttpClientErrorException.NotFound notFound){
             throw new GitNotFoundException("Git user not found!");
         }
     }

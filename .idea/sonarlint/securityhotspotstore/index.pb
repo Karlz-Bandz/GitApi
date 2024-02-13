@@ -42,3 +42,5 @@ q
 Asrc/main/java/org/example/exception/git/GitNotFoundException.java,c\5\c53e2735343190f9bf8b48ca3bfe319683908a4a
 _
 /src/main/java/org/example/dto/GitMasterDto.java,5\a\5a1068b73131cb48bb9299ad5f2ed9bee724fc37
+u
+Esrc/main/java/org/example/exception/git/GitUnauthorizedException.java,1\3\13faf05bfdc4cf219d34dcd36470055f0c4dac7e
