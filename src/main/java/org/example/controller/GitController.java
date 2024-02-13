@@ -12,6 +12,6 @@ public interface GitController {
     @GetMapping("/limit")
     ResponseEntity<Object> getLimit();
 
-    @GetMapping("/repositories/{username}")
+    @GetMapping("/repos/{username}")
     ResponseEntity<GitMasterDto> getRepositories(@PathVariable("username") String username);
 }
