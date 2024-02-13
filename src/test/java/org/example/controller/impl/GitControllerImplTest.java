@@ -1,8 +1,9 @@
 package org.example.controller.impl;
 
+import org.example.dto.GitMasterDto;
+import org.example.dto.GitDto;
 import org.example.dto.BranchDto;
 import org.example.dto.CommitDto;
-import org.example.dto.GitDto;
 import org.example.dto.RepoDto;
 import org.example.service.GitService;
 import org.junit.jupiter.api.Test;
@@ -11,10 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -41,25 +38,32 @@ class GitControllerImplTest {
                 .build();
         BranchDto branchDto1 = BranchDto.builder()
                 .name("Branch1")
+                .commit(commitDto1)
                 .build();
         BranchDto branchDto2 = BranchDto.builder()
                 .name("Branch2")
+                .commit(commitDto2)
                 .build();
-        Map<String, String> mockBranches = Map.of(
-                branchDto1.getName(), commitDto1.getSha(),
-                branchDto2.getName(), commitDto2.getSha()
-        );
+        BranchDto[] mockBranches = {branchDto1, branchDto2};
+
         GitDto gitDto1 = GitDto.builder()
                 .repoName(repoDto1.getName())
                 .branches(mockBranches)
                 .build();
-        List<GitDto> mockGitDtoList = Arrays.asList(gitDto1, gitDto1);
 
-        ResponseEntity<List<GitDto>> mockResponse = ResponseEntity.ok(mockGitDtoList);
+        GitDto[] mockGitDtoList = {gitDto1, gitDto1};
 
-        when(gitService.getRepositories(repoDto1.getName())).thenReturn(mockResponse);
+        GitMasterDto mockGitMasterDto = GitMasterDto.builder()
+                .userName("testUser")
+                .repositories(mockGitDtoList)
+                .build();
 
-        ResponseEntity<List<GitDto>> response = gitController.getRepositories(repoDto1.getName());
+        ResponseEntity<GitMasterDto> mockResponse = ResponseEntity.ok(mockGitMasterDto);
+
+        when(gitService.getRepositories(repoDto1.getName()))
+                .thenReturn(ResponseEntity.ok(mockGitMasterDto));
+
+        ResponseEntity<GitMasterDto> response = gitController.getRepositories(repoDto1.getName());
 
         assertEquals(response, mockResponse);
     }

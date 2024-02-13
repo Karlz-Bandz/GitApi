@@ -1,8 +1,9 @@
 package org.example.dto;
 
-import lombok.*;
-
-import java.util.Map;
+import lombok.Data;
+import lombok.Builder;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
@@ -10,5 +11,5 @@ import java.util.Map;
 @NoArgsConstructor
 public class GitDto {
     private String repoName;
-    private Map<String, String> branches;
+    private BranchDto[] branches;
 }
