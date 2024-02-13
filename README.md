@@ -76,7 +76,7 @@ If user doesn't have any repos
 ```json
 {
   "status": 404,
-  "message": "User6766 doesn't have any repos"
+  "message": "User6766 doesn't have any repos!"
 }
 ```
 

@@ -59,7 +59,7 @@ public class GitServiceImpl implements GitService {
 
                 return ResponseEntity.ok(userData);
             }else{
-                throw new GitNotFoundException(username + " doesn't have any repos");
+                throw new GitNotFoundException(username + " doesn't have any repos!");
             }
         }catch (HttpClientErrorException.NotFound notFound){
             throw new GitNotFoundException("Git user not found!");
