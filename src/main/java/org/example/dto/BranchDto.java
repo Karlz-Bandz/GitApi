@@ -11,4 +11,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BranchDto {
     private String name;
+    private CommitDto commit;
 }

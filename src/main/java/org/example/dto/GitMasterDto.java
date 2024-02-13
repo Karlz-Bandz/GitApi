@@ -5,13 +5,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class GitMasterDto {
     private String userName;
-    List<GitDto> repositories;
+    private GitDto[] repositories;
 }

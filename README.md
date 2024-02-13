@@ -31,22 +31,35 @@ repositories with them branches with last commit sha.
 Example response:
 ```json
 {
-  "userName": "Karlz",
+  "userName": "Karol",
   "repositories": [
     {
-      "repoName": "bootswatch",
-      "branches": {
-        "master": "2caa868f12eae97416356d1e2e6e18491ee27351"
-      }
+      "repoName": "ADFS",
+      "branches": [
+        {
+          "name": "master",
+          "commit": {
+            "sha": "a52a3b070e3d9f7ff5a06e03408c7f01e9bde678"
+          }
+        }
+      ]
     },
     {
-      "repoName": "EPPlus",
-      "branches": {
-        "Conditional_Formatting": "65fbe98e9e3882e14d17ff1b541dcc091ca57336",
-        "ProtectedRanges": "2fa821e032cd5f6b14e03acb54f37446dc60796b",
-        "CoreChanges": "221e56f7234ddd48a29f3677814caa30a0ca0233",
-        "AutoFitMaximumValue": "e4556af2fed964794926ba6ca97ab70f6d54f320"
-      }
+      "repoName": "easyhadoop",
+      "branches": [
+        {
+          "name": "develop",
+          "commit": {
+            "sha": "cf1b8ce70e48d5f6fd8a85dd69ee1aa4325651e6"
+          }
+        },
+        {
+          "name": "gh-pages",
+          "commit": {
+            "sha": "a13908b088512d97412898cef0a6a9862d8a4d6e"
+          }
+        }
+      ]
     }
   ]
 }

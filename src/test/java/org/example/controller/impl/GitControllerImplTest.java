@@ -13,10 +13,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -42,19 +38,21 @@ class GitControllerImplTest {
                 .build();
         BranchDto branchDto1 = BranchDto.builder()
                 .name("Branch1")
+                .commit(commitDto1)
                 .build();
         BranchDto branchDto2 = BranchDto.builder()
                 .name("Branch2")
+                .commit(commitDto2)
                 .build();
-        Map<String, String> mockBranches = Map.of(
-                branchDto1.getName(), commitDto1.getSha(),
-                branchDto2.getName(), commitDto2.getSha()
-        );
+        BranchDto[] mockBranches = {branchDto1, branchDto2};
+
         GitDto gitDto1 = GitDto.builder()
                 .repoName(repoDto1.getName())
                 .branches(mockBranches)
                 .build();
-        List<GitDto> mockGitDtoList = Arrays.asList(gitDto1, gitDto1);
+
+        GitDto[] mockGitDtoList = {gitDto1, gitDto1};
+
         GitMasterDto mockGitMasterDto = GitMasterDto.builder()
                 .userName("testUser")
                 .repositories(mockGitDtoList)

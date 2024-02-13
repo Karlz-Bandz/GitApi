@@ -17,10 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
@@ -53,64 +49,32 @@ class GitServiceImplTest {
         String userName = "TestUser";
         String repoName = "TestRepo";
 
+        String apiBranchUrl = GIT_API_URL + "/repos/" + userName + "/" + repoName + "/branches";
+
+        CommitDto commitDto1 = CommitDto.builder()
+                .sha("444444555")
+                .build();
+        CommitDto commitDto2 = CommitDto.builder()
+                .sha("333334555")
+                .build();
+
         BranchDto branch1 = BranchDto.builder()
                 .name("Branch1")
+                .commit(commitDto1)
                 .build();
         BranchDto branch2 = BranchDto.builder()
                 .name("Branch2")
-                .build();
-        BranchDto[] branchArr1 = {branch1, branch2};
-
-        String apiBranchUrl = GIT_API_URL + "/repos/" + userName + "/" + repoName + "/branches";
-
-        when(restTemplate.getForEntity(apiBranchUrl, BranchDto[].class))
-                .thenReturn(ResponseEntity.ok(branchArr1));
-
-        String apiLastCommitUrl1 = GIT_API_URL + "/repos/" + userName + "/" + repoName + "/commits/" + branch1.getName();
-        String apiLastCommitUrl2 = GIT_API_URL + "/repos/" + userName + "/" + repoName + "/commits/" + branch2.getName();
-
-        CommitDto mockCommit1 = CommitDto.builder()
-                .sha("333444122")
-                .build();
-        CommitDto mockCommit2 = CommitDto.builder()
-                .sha("333444122")
+                .commit(commitDto2)
                 .build();
 
-        Map<String, String> expectedResponse = Map.of(
-                branch1.getName(), mockCommit1.getSha(),
-                branch2.getName(), mockCommit2.getSha()
-        );
+        BranchDto[] branches = {branch1, branch2};
 
-        when(restTemplate.getForEntity(apiLastCommitUrl1, CommitDto.class))
-                .thenReturn(ResponseEntity.ok(mockCommit1));
-        when(restTemplate.getForEntity(apiLastCommitUrl2, CommitDto.class))
-                .thenReturn(ResponseEntity.ok(mockCommit2));
+        when(restTemplate.getForEntity(apiBranchUrl, BranchDto[].class)).thenReturn(ResponseEntity.ok(branches));
 
-        ResponseEntity<Map<String, String>> response = gitService.getBranchesForRepository(userName, repoName);
+        ResponseEntity<BranchDto[]> response = gitService.getBranchForRepository(userName, repoName);
 
-        assertEquals(expectedResponse, response.getBody());
-        assertEquals(response.getStatusCode(), HttpStatusCode.valueOf(200));
-    }
-
-    @Test
-    void getLastCommitShaTest_SUCCESS(){
-        String userName = "TestUser";
-        String repoName = "TestRepo";
-        String branchName = "TestBranch";
-
-        String apiLastCommitUrl = GIT_API_URL + "/repos/" + userName + "/" + repoName + "/commits/" + branchName;
-
-        CommitDto mockCommit = CommitDto.builder()
-                .sha("333444122")
-                .build();
-
-        when(restTemplate.getForEntity(apiLastCommitUrl, CommitDto.class))
-                .thenReturn(ResponseEntity.ok(mockCommit));
-
-        ResponseEntity<String> response = gitService.getLastCommitSha(userName, repoName, branchName);
-
-        assertEquals(response.getBody(), mockCommit.getSha());
-        assertEquals(response.getStatusCode(), HttpStatusCode.valueOf(200));
+        assertEquals(branches, response.getBody());
+        assertEquals(HttpStatusCode.valueOf(200), response.getStatusCode());
     }
 
     @Test
@@ -123,9 +87,8 @@ class GitServiceImplTest {
 
         HttpClientErrorException expectedResponse = new HttpClientErrorException(HttpStatus.NOT_FOUND);
 
-        HttpClientErrorException exceptionResponse = assertThrows(HttpClientErrorException.class, () -> {
-            gitService.getRepositories(username);
-        });
+        HttpClientErrorException exceptionResponse = assertThrows(HttpClientErrorException.class, () ->
+                gitService.getRepositories(username));
 
         assertEquals(expectedResponse.getMessage(),
                 exceptionResponse.getMessage());
@@ -142,22 +105,8 @@ class GitServiceImplTest {
         RepoDto repoDto2 = RepoDto.builder()
                 .name("Repo2")
                 .build();
-        RepoDto[] repos = {repoDto1, repoDto2};
 
-        BranchDto branch1 = BranchDto.builder()
-                .name("Branch1")
-                .build();
-        BranchDto branch2 = BranchDto.builder()
-                .name("Branch2")
-                .build();
-        BranchDto branch3 = BranchDto.builder()
-                .name("Branch3")
-                .build();
-        BranchDto branch4 = BranchDto.builder()
-                .name("Branch4")
-                .build();
-        BranchDto[] branchArr1 = {branch1, branch2};
-        BranchDto[] branchArr2 = {branch3, branch4};
+        RepoDto[] repos = {repoDto1, repoDto2};
 
         CommitDto commitDto1 = CommitDto.builder()
                 .sha("122222234")
@@ -172,15 +121,25 @@ class GitServiceImplTest {
                 .sha("999988889")
                 .build();
 
-        Map<String, String> branches1 = Map.of(
-                branch1.getName(), commitDto1.getSha(),
-                branch2.getName(), commitDto2.getSha()
-        );
+        BranchDto branch1 = BranchDto.builder()
+                .name("Branch1")
+                .commit(commitDto1)
+                .build();
+        BranchDto branch2 = BranchDto.builder()
+                .name("Branch2")
+                .commit(commitDto2)
+                .build();
+        BranchDto branch3 = BranchDto.builder()
+                .name("Branch3")
+                .commit(commitDto3)
+                .build();
+        BranchDto branch4 = BranchDto.builder()
+                .name("Branch4")
+                .commit(commitDto4)
+                .build();
 
-        Map<String, String> branches2 = Map.of(
-                branch3.getName(), commitDto3.getSha(),
-                branch4.getName(), commitDto4.getSha()
-        );
+        BranchDto[] branches1 = {branch1, branch2};
+        BranchDto[] branches2 = {branch3, branch4};
 
         GitDto gitDto1 = GitDto.builder()
                 .repoName(repoDto1.getName())
@@ -190,7 +149,8 @@ class GitServiceImplTest {
                 .repoName(repoDto2.getName())
                 .branches(branches2)
                 .build();
-        List<GitDto> responses = Arrays.asList(gitDto1, gitDto2);
+
+        GitDto[] responses = {gitDto1, gitDto2};
         GitMasterDto expectedResponse = GitMasterDto.builder()
                         .userName(username)
                         .repositories(responses)
@@ -200,18 +160,9 @@ class GitServiceImplTest {
                 .thenReturn(ResponseEntity.ok(repos));
 
         when(restTemplate.getForEntity(GIT_API_URL + "/repos/" + username + "/" + repoDto1.getName() + "/branches", BranchDto[].class))
-                .thenReturn(ResponseEntity.ok(branchArr1));
+                .thenReturn(ResponseEntity.ok(branches1));
         when(restTemplate.getForEntity(GIT_API_URL + "/repos/" + username + "/" + repoDto2.getName() + "/branches", BranchDto[].class))
-                .thenReturn(ResponseEntity.ok(branchArr2));
-
-        when(restTemplate.getForEntity(GIT_API_URL + "/repos/" + username + "/" + repoDto1.getName() + "/commits/" + branch1.getName(), CommitDto.class))
-                .thenReturn(ResponseEntity.ok(commitDto1));
-        when(restTemplate.getForEntity(GIT_API_URL + "/repos/" + username + "/" + repoDto1.getName() + "/commits/" + branch2.getName(), CommitDto.class))
-                .thenReturn(ResponseEntity.ok(commitDto2));
-        when(restTemplate.getForEntity(GIT_API_URL + "/repos/" + username + "/" + repoDto2.getName() + "/commits/" + branch3.getName(), CommitDto.class))
-                .thenReturn(ResponseEntity.ok(commitDto3));
-        when(restTemplate.getForEntity(GIT_API_URL + "/repos/" + username + "/" + repoDto2.getName() + "/commits/" + branch4.getName(), CommitDto.class))
-                .thenReturn(ResponseEntity.ok(commitDto4));
+                .thenReturn(ResponseEntity.ok(branches2));
 
         ResponseEntity<GitMasterDto> response = gitService.getRepositories(username);
 
