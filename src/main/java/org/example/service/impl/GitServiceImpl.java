@@ -38,8 +38,8 @@ public class GitServiceImpl implements GitService {
         String apiUrl = GIT_API_URL + "/users/" + username + "/repos";
 
         try {
-            ResponseEntity<RepoDto[]> response = restTemplate.getForEntity(apiUrl, RepoDto[].class);
-            RepoDto[] repositories = response.getBody();
+            RepoDto[] repositories = restTemplate.getForEntity(apiUrl, RepoDto[].class)
+                    .getBody();
 
             if(repositories != null && repositories.length > 0){
                 GitDto[] responses = new GitDto[repositories.length];
