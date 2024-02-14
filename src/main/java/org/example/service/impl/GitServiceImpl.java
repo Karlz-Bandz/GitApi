@@ -1,9 +1,10 @@
 package org.example.service.impl;
 
 import org.example.dto.GitMasterDto;
+import org.example.dto.RateLimitDto;
+import org.example.dto.RepoDto;
 import org.example.dto.GitDto;
 import org.example.dto.BranchDto;
-import org.example.dto.RepoDto;
 import org.example.exception.git.GitNotFoundException;
 import org.example.exception.git.GitUnauthorizedException;
 import org.example.service.GitService;
@@ -23,11 +24,11 @@ public class GitServiceImpl implements GitService {
     }
 
     @Override
-    public Object getLimit() {
+    public RateLimitDto getLimit() {
         String apiUrl = GIT_API_URL + "/rate_limit";
-        try{
-            return restTemplate.getForObject(apiUrl, Object.class);
-        }catch (HttpClientErrorException.Unauthorized unauthorized){
+        try {
+            return restTemplate.getForObject(apiUrl, RateLimitDto.class);
+        } catch (HttpClientErrorException.Unauthorized unauthorized) {
             throw new GitUnauthorizedException("You are unauthorized!");
         }
     }
@@ -38,9 +39,9 @@ public class GitServiceImpl implements GitService {
 
         try {
             RepoDto[] repositories = restTemplate.getForObject(apiUrl, RepoDto[].class);
-            if(repositories != null && repositories.length > 0){
+            if (repositories != null && repositories.length > 0) {
                 GitDto[] responses = new GitDto[repositories.length];
-                for (int i = 0;  i < repositories.length; i++) {
+                for (int i = 0; i < repositories.length; i++) {
                     String repoName = repositories[i].getName();
                     BranchDto[] branches = getBranchForRepository(username, repoName);
                     GitDto gitDto = GitDto.builder()
@@ -54,13 +55,12 @@ public class GitServiceImpl implements GitService {
                         .userName(username)
                         .repositories(responses)
                         .build();
-            }else{
+            } else {
                 throw new GitNotFoundException(username + " doesn't have any repos!");
             }
-        }catch (HttpClientErrorException.Unauthorized unauthorized){
+        } catch (HttpClientErrorException.Unauthorized unauthorized) {
             throw new GitUnauthorizedException("You are unauthorized!");
-        }
-        catch (HttpClientErrorException.NotFound notFound){
+        } catch (HttpClientErrorException.NotFound notFound) {
             throw new GitNotFoundException("Git user not found!");
         }
     }

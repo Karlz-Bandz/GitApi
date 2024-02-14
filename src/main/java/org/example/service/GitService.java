@@ -2,10 +2,11 @@ package org.example.service;
 
 import org.example.dto.BranchDto;
 import org.example.dto.GitMasterDto;
+import org.example.dto.RateLimitDto;
 
 public interface GitService {
 
-    Object getLimit();
+    RateLimitDto getLimit();
 
     GitMasterDto getRepositories(String username);
 

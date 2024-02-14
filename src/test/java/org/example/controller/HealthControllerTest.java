@@ -14,7 +14,7 @@ class HealthControllerTest {
     private HealthController healthController;
 
     @Test
-    void healthCheckTest(){
+    void healthCheckTest() {
         String expectedResult = "Health!";
 
         String result = healthController.healthCheck();

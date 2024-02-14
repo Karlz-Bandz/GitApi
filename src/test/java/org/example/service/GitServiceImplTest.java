@@ -1,10 +1,12 @@
 package org.example.service;
 
 import org.example.dto.GitMasterDto;
-import org.example.dto.GitDto;
-import org.example.dto.BranchDto;
+import org.example.dto.RateLimitDto;
 import org.example.dto.CommitDto;
 import org.example.dto.RepoDto;
+import org.example.dto.GitDto;
+import org.example.dto.BranchDto;
+import org.example.dto.RateDto;
 import org.example.exception.git.GitNotFoundException;
 import org.example.service.impl.GitServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -30,21 +32,27 @@ class GitServiceImplTest {
     private static final String GIT_API_URL = "https://api.github.com";
 
     @Test
-    void getLimitTest(){
+    void getLimitTest() {
         String apiUrl = GIT_API_URL + "/rate_limit";
 
-        String mockResponse = "mock";
+        RateDto rate = RateDto.builder()
+                .limit(5000)
+                .remaining(4569)
+                .build();
+        RateLimitDto rateLimit = RateLimitDto.builder()
+                .rate(rate)
+                .build();
 
-        when(restTemplate.getForObject(apiUrl, Object.class))
-                .thenReturn(mockResponse);
+        when(restTemplate.getForObject(apiUrl, RateLimitDto.class))
+                .thenReturn(rateLimit);
 
-        Object response = gitService.getLimit();
+        RateLimitDto response = gitService.getLimit();
 
-        assertEquals(mockResponse, response);
+        assertEquals(rateLimit, response);
     }
 
     @Test
-    void getBranchesForRepositoryTest_SUCCESS(){
+    void getBranchesForRepositoryTest_SUCCESS() {
         String userName = "TestUser";
         String repoName = "TestRepo";
 
@@ -76,7 +84,7 @@ class GitServiceImplTest {
     }
 
     @Test
-    void getRepositoriesTest_USER_DOESNT_HAVE_REPOS_ERROR(){
+    void getRepositoriesTest_USER_DOESNT_HAVE_REPOS_ERROR() {
         String username = "TestUser";
         String gitRepoApi = GIT_API_URL + "/users/" + username + "/repos";
         RepoDto[] mockRepo = {};
@@ -94,7 +102,7 @@ class GitServiceImplTest {
     }
 
     @Test
-    void getRepositoriesTest_SUCCESS(){
+    void getRepositoriesTest_SUCCESS() {
         String username = "TestUser";
         String gitRepoApi = GIT_API_URL + "/users/" + username + "/repos";
 
@@ -151,9 +159,9 @@ class GitServiceImplTest {
 
         GitDto[] responses = {gitDto1, gitDto2};
         GitMasterDto expectedResponse = GitMasterDto.builder()
-                        .userName(username)
-                        .repositories(responses)
-                        .build();
+                .userName(username)
+                .repositories(responses)
+                .build();
 
         when(restTemplate.getForObject(gitRepoApi, RepoDto[].class))
                 .thenReturn(repos);

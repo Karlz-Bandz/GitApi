@@ -13,7 +13,7 @@ public class ApiRequestConfig {
     private String githubToken;
 
     @Bean
-    public RestTemplate restTemplate(){
+    public RestTemplate restTemplate() {
 
         return new RestTemplateBuilder()
                 .defaultHeader("Accept", "application/json")
