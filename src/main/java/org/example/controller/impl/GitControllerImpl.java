@@ -17,11 +17,11 @@ public class GitControllerImpl implements GitController {
 
     @Override
     public ResponseEntity<Object> getLimit(){
-        return gitService.getLimit();
+        return ResponseEntity.ok(gitService.getLimit());
     }
 
     @Override
     public ResponseEntity<GitMasterDto> getRepositories(String username){
-        return gitService.getRepositories(username);
+        return ResponseEntity.ok(gitService.getRepositories(username));
     }
 }

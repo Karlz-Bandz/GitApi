@@ -20,6 +20,7 @@ public class GlobalExceptionHandler {
                 .build();
         return new ResponseEntity<>(gitErrorResponse, httpStatus);
     }
+
     @ExceptionHandler(GitNotFoundException.class)
     public ResponseEntity<GitErrorResponse> handleGitUserNotFoundException(GitNotFoundException ex){
         HttpStatus httpStatus = HttpStatus.NOT_FOUND;

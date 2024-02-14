@@ -61,7 +61,7 @@ class GitControllerImplTest {
         ResponseEntity<GitMasterDto> mockResponse = ResponseEntity.ok(mockGitMasterDto);
 
         when(gitService.getRepositories(repoDto1.getName()))
-                .thenReturn(ResponseEntity.ok(mockGitMasterDto));
+                .thenReturn(mockGitMasterDto);
 
         ResponseEntity<GitMasterDto> response = gitController.getRepositories(repoDto1.getName());
 
@@ -70,12 +70,12 @@ class GitControllerImplTest {
 
     @Test
     void getLimitControllerTest(){
-        ResponseEntity<Object> mockResponse = ResponseEntity.ok("mockResponse");
+        Object mockResponse = "mockResponse";
 
         when(gitService.getLimit()).thenReturn(mockResponse);
 
         ResponseEntity<Object> response = gitController.getLimit();
 
-        assertEquals(response, mockResponse);
+        assertEquals(response.getBody(), mockResponse);
     }
 }
