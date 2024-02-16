@@ -29,7 +29,7 @@ public class GitServiceImpl implements GitService {
         try {
             return restTemplate.getForObject(apiUrl, RateLimitDto.class);
         } catch (HttpClientErrorException.Unauthorized unauthorized) {
-            throw new GitUnauthorizedException("You are unauthorized!");
+            throw new GitUnauthorizedException("User unauthorized!");
         }
     }
 

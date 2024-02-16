@@ -8,16 +8,19 @@ import org.example.dto.GitDto;
 import org.example.dto.BranchDto;
 import org.example.dto.RateDto;
 import org.example.exception.git.GitNotFoundException;
+import org.example.exception.git.GitUnauthorizedException;
 import org.example.service.impl.GitServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,6 +33,18 @@ class GitServiceImplTest {
     private GitServiceImpl gitService;
 
     private static final String GIT_API_URL = "https://api.github.com";
+
+    @Test
+    void getLimitTest_UNAUTHORIZED_ERROR() {
+        String apiUrl = GIT_API_URL + "/rate_limit";
+
+        HttpClientErrorException.Unauthorized unauthorizedMock = Mockito.mock(HttpClientErrorException.Unauthorized.class);
+
+        doThrow(unauthorizedMock)
+                .when(restTemplate).getForObject(apiUrl, RateLimitDto.class);
+
+        assertThrows(GitUnauthorizedException.class, gitService::getLimit);
+    }
 
     @Test
     void getLimitTest() {
@@ -81,6 +96,36 @@ class GitServiceImplTest {
         BranchDto[] response = gitService.getBranchForRepository(userName, repoName);
 
         assertEquals(branches, response);
+    }
+
+    @Test
+    void getRepositoriesTest_USER_NOT_FOUND_ERROR() {
+        String username = "TestUser";
+        String apiUrl = GIT_API_URL + "/users/" + username + "/repos";
+
+        HttpClientErrorException.NotFound notFoundExceptionMock = Mockito.mock(HttpClientErrorException.NotFound.class);
+
+        doThrow(notFoundExceptionMock)
+                .when(restTemplate).getForObject(apiUrl, RepoDto[].class);
+
+        assertThrows(GitNotFoundException.class, () -> {
+            gitService.getRepositories(username);
+        });
+    }
+
+    @Test
+    void getRepositoriesTest_UNAUTHORIZED_ERROR() {
+        String username = "TestUser";
+        String apiUrl = GIT_API_URL + "/users/" + username + "/repos";
+
+        HttpClientErrorException.Unauthorized unauthorizedMock = Mockito.mock(HttpClientErrorException.Unauthorized.class);
+
+        doThrow(unauthorizedMock)
+                .when(restTemplate).getForObject(apiUrl, RepoDto[].class);
+
+        assertThrows(GitUnauthorizedException.class, () -> {
+            gitService.getRepositories(username);
+        });
     }
 
     @Test
