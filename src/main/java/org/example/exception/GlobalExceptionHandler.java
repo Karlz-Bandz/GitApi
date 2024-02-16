@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(GitUnauthorizedException.class)
-    public ResponseEntity<GitErrorResponse> handleGitUnauthorizedException(GitUnauthorizedException ex){
+    public ResponseEntity<GitErrorResponse> handleGitUnauthorizedException(GitUnauthorizedException ex) {
         HttpStatus httpStatus = HttpStatus.UNAUTHORIZED;
         GitErrorResponse gitErrorResponse = GitErrorResponse.builder()
                 .status(httpStatus.value())
@@ -20,8 +20,9 @@ public class GlobalExceptionHandler {
                 .build();
         return new ResponseEntity<>(gitErrorResponse, httpStatus);
     }
+
     @ExceptionHandler(GitNotFoundException.class)
-    public ResponseEntity<GitErrorResponse> handleGitUserNotFoundException(GitNotFoundException ex){
+    public ResponseEntity<GitErrorResponse> handleGitUserNotFoundException(GitNotFoundException ex) {
         HttpStatus httpStatus = HttpStatus.NOT_FOUND;
         GitErrorResponse gitErrorResponse = GitErrorResponse.builder()
                 .status(httpStatus.value())

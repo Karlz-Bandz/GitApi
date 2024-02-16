@@ -1,10 +1,12 @@
 package org.example.controller.impl;
 
 import org.example.dto.GitMasterDto;
-import org.example.dto.GitDto;
-import org.example.dto.BranchDto;
+import org.example.dto.RateLimitDto;
 import org.example.dto.CommitDto;
 import org.example.dto.RepoDto;
+import org.example.dto.RateDto;
+import org.example.dto.GitDto;
+import org.example.dto.BranchDto;
 import org.example.service.GitService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,7 +28,7 @@ class GitControllerImplTest {
     private GitControllerImpl gitController;
 
     @Test
-    void getRepositoriesControllerTest(){
+    void getRepositoriesControllerTest() {
         RepoDto repoDto1 = RepoDto.builder()
                 .name("Repo1")
                 .build();
@@ -61,7 +63,7 @@ class GitControllerImplTest {
         ResponseEntity<GitMasterDto> mockResponse = ResponseEntity.ok(mockGitMasterDto);
 
         when(gitService.getRepositories(repoDto1.getName()))
-                .thenReturn(ResponseEntity.ok(mockGitMasterDto));
+                .thenReturn(mockGitMasterDto);
 
         ResponseEntity<GitMasterDto> response = gitController.getRepositories(repoDto1.getName());
 
@@ -69,13 +71,19 @@ class GitControllerImplTest {
     }
 
     @Test
-    void getLimitControllerTest(){
-        ResponseEntity<Object> mockResponse = ResponseEntity.ok("mockResponse");
+    void getLimitControllerTest() {
+        RateDto rate = RateDto.builder()
+                .limit(5000)
+                .remaining(4569)
+                .build();
+        RateLimitDto rateLimit = RateLimitDto.builder()
+                .rate(rate)
+                .build();
 
-        when(gitService.getLimit()).thenReturn(mockResponse);
+        when(gitService.getLimit()).thenReturn(rateLimit);
 
-        ResponseEntity<Object> response = gitController.getLimit();
+        ResponseEntity<RateLimitDto> response = gitController.getLimit();
 
-        assertEquals(response, mockResponse);
+        assertEquals(response.getBody(), rateLimit);
     }
 }

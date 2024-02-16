@@ -17,13 +17,18 @@ your rate_limit of api requests.
 
 ENDPOINTS:<br>
 http://localhost:8080/git/limit <br>
-Returns the limit of requests that is up of provided token.
+Returns the limit and remaining requests that are up of provided token.
 It is a good test, if your token is suitable response should be 
 for example:
 
-"resources": {
-"core": {
-"limit": 5000.....
+```json
+{
+  "rate": {
+    "limit": 5000,
+    "remaining": 4936
+  }
+}
+```
 
 http://localhost:8080/git/repos/{username} <br>
 Returns GitMasterDto object that represents user's

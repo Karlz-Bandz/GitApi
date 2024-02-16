@@ -44,3 +44,9 @@ _
 /src/main/java/org/example/dto/GitMasterDto.java,5\a\5a1068b73131cb48bb9299ad5f2ed9bee724fc37
 u
 Esrc/main/java/org/example/exception/git/GitUnauthorizedException.java,1\3\13faf05bfdc4cf219d34dcd36470055f0c4dac7e
+[
++src/main/java/org/example/dto/LimitDto.java,5\a\5a8ef1fce0f7a98d5b8ca391c90e8c939862bff7
+Z
+*src/main/java/org/example/dto/RateDto.java,2\a\2aacbb26921009954b2adc13ebd445ba97b96171
+_
+/src/main/java/org/example/dto/RateLimitDto.java,0\9\09a35ae01065f6f341f71d96684d4575caa51857

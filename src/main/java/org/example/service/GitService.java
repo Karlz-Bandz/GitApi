@@ -2,13 +2,13 @@ package org.example.service;
 
 import org.example.dto.BranchDto;
 import org.example.dto.GitMasterDto;
-import org.springframework.http.ResponseEntity;
+import org.example.dto.RateLimitDto;
 
 public interface GitService {
 
-    ResponseEntity<Object> getLimit();
+    RateLimitDto getLimit();
 
-    ResponseEntity<GitMasterDto> getRepositories(String username);
+    GitMasterDto getRepositories(String username);
 
-    ResponseEntity<BranchDto[]> getBranchForRepository(String userName, String repoName);
+    BranchDto[] getBranchForRepository(String userName, String repoName);
 }

@@ -1,24 +1,26 @@
 package org.example.service;
 
 import org.example.dto.GitMasterDto;
-import org.example.dto.GitDto;
-import org.example.dto.BranchDto;
+import org.example.dto.RateLimitDto;
 import org.example.dto.CommitDto;
 import org.example.dto.RepoDto;
+import org.example.dto.GitDto;
+import org.example.dto.BranchDto;
+import org.example.dto.RateDto;
+import org.example.exception.git.GitNotFoundException;
+import org.example.exception.git.GitUnauthorizedException;
 import org.example.service.impl.GitServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -33,19 +35,39 @@ class GitServiceImplTest {
     private static final String GIT_API_URL = "https://api.github.com";
 
     @Test
-    void getLimitTest(){
+    void getLimitTest_UNAUTHORIZED_ERROR() {
         String apiUrl = GIT_API_URL + "/rate_limit";
 
-        when(restTemplate.getForEntity(apiUrl, Object.class))
-                .thenReturn(new ResponseEntity<>(HttpStatus.OK));
+        HttpClientErrorException.Unauthorized unauthorizedMock = Mockito.mock(HttpClientErrorException.Unauthorized.class);
 
-        ResponseEntity<Object> response = gitService.getLimit();
+        doThrow(unauthorizedMock)
+                .when(restTemplate).getForObject(apiUrl, RateLimitDto.class);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertThrows(GitUnauthorizedException.class, gitService::getLimit);
     }
 
     @Test
-    void getBranchesForRepositoryTest_SUCCESS(){
+    void getLimitTest() {
+        String apiUrl = GIT_API_URL + "/rate_limit";
+
+        RateDto rate = RateDto.builder()
+                .limit(5000)
+                .remaining(4569)
+                .build();
+        RateLimitDto rateLimit = RateLimitDto.builder()
+                .rate(rate)
+                .build();
+
+        when(restTemplate.getForObject(apiUrl, RateLimitDto.class))
+                .thenReturn(rateLimit);
+
+        RateLimitDto response = gitService.getLimit();
+
+        assertEquals(rateLimit, response);
+    }
+
+    @Test
+    void getBranchesForRepositoryTest_SUCCESS() {
         String userName = "TestUser";
         String repoName = "TestRepo";
 
@@ -69,25 +91,55 @@ class GitServiceImplTest {
 
         BranchDto[] branches = {branch1, branch2};
 
-        when(restTemplate.getForEntity(apiBranchUrl, BranchDto[].class)).thenReturn(ResponseEntity.ok(branches));
+        when(restTemplate.getForObject(apiBranchUrl, BranchDto[].class)).thenReturn(branches);
 
-        ResponseEntity<BranchDto[]> response = gitService.getBranchForRepository(userName, repoName);
+        BranchDto[] response = gitService.getBranchForRepository(userName, repoName);
 
-        assertEquals(branches, response.getBody());
-        assertEquals(HttpStatusCode.valueOf(200), response.getStatusCode());
+        assertEquals(branches, response);
     }
 
     @Test
-    void getRepositoriesTest_ERROR(){
+    void getRepositoriesTest_USER_NOT_FOUND_ERROR() {
+        String username = "TestUser";
+        String apiUrl = GIT_API_URL + "/users/" + username + "/repos";
+
+        HttpClientErrorException.NotFound notFoundExceptionMock = Mockito.mock(HttpClientErrorException.NotFound.class);
+
+        doThrow(notFoundExceptionMock)
+                .when(restTemplate).getForObject(apiUrl, RepoDto[].class);
+
+        assertThrows(GitNotFoundException.class, () -> {
+            gitService.getRepositories(username);
+        });
+    }
+
+    @Test
+    void getRepositoriesTest_UNAUTHORIZED_ERROR() {
+        String username = "TestUser";
+        String apiUrl = GIT_API_URL + "/users/" + username + "/repos";
+
+        HttpClientErrorException.Unauthorized unauthorizedMock = Mockito.mock(HttpClientErrorException.Unauthorized.class);
+
+        doThrow(unauthorizedMock)
+                .when(restTemplate).getForObject(apiUrl, RepoDto[].class);
+
+        assertThrows(GitUnauthorizedException.class, () -> {
+            gitService.getRepositories(username);
+        });
+    }
+
+    @Test
+    void getRepositoriesTest_USER_DOESNT_HAVE_REPOS_ERROR() {
         String username = "TestUser";
         String gitRepoApi = GIT_API_URL + "/users/" + username + "/repos";
+        RepoDto[] mockRepo = {};
 
-        when(restTemplate.getForEntity(gitRepoApi, RepoDto[].class))
-                .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
+        when(restTemplate.getForObject(gitRepoApi, RepoDto[].class))
+                .thenReturn(mockRepo);
 
-        HttpClientErrorException expectedResponse = new HttpClientErrorException(HttpStatus.NOT_FOUND);
+        GitNotFoundException expectedResponse = new GitNotFoundException(username + " doesn't have any repos!");
 
-        HttpClientErrorException exceptionResponse = assertThrows(HttpClientErrorException.class, () ->
+        GitNotFoundException exceptionResponse = assertThrows(GitNotFoundException.class, () ->
                 gitService.getRepositories(username));
 
         assertEquals(expectedResponse.getMessage(),
@@ -95,7 +147,7 @@ class GitServiceImplTest {
     }
 
     @Test
-    void getRepositoriesTest_SUCCESS(){
+    void getRepositoriesTest_SUCCESS() {
         String username = "TestUser";
         String gitRepoApi = GIT_API_URL + "/users/" + username + "/repos";
 
@@ -152,20 +204,20 @@ class GitServiceImplTest {
 
         GitDto[] responses = {gitDto1, gitDto2};
         GitMasterDto expectedResponse = GitMasterDto.builder()
-                        .userName(username)
-                        .repositories(responses)
-                        .build();
+                .userName(username)
+                .repositories(responses)
+                .build();
 
-        when(restTemplate.getForEntity(gitRepoApi, RepoDto[].class))
-                .thenReturn(ResponseEntity.ok(repos));
+        when(restTemplate.getForObject(gitRepoApi, RepoDto[].class))
+                .thenReturn(repos);
 
-        when(restTemplate.getForEntity(GIT_API_URL + "/repos/" + username + "/" + repoDto1.getName() + "/branches", BranchDto[].class))
-                .thenReturn(ResponseEntity.ok(branches1));
-        when(restTemplate.getForEntity(GIT_API_URL + "/repos/" + username + "/" + repoDto2.getName() + "/branches", BranchDto[].class))
-                .thenReturn(ResponseEntity.ok(branches2));
+        when(restTemplate.getForObject(GIT_API_URL + "/repos/" + username + "/" + repoDto1.getName() + "/branches", BranchDto[].class))
+                .thenReturn(branches1);
+        when(restTemplate.getForObject(GIT_API_URL + "/repos/" + username + "/" + repoDto2.getName() + "/branches", BranchDto[].class))
+                .thenReturn(branches2);
 
-        ResponseEntity<GitMasterDto> response = gitService.getRepositories(username);
+        GitMasterDto response = gitService.getRepositories(username);
 
-        assertEquals(expectedResponse, response.getBody());
+        assertEquals(expectedResponse, response);
     }
 }
